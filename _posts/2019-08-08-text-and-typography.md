@@ -126,14 +126,6 @@ if [ $? -ne 0 ]; then
 fi;
 ```
 
-### Specific filename
-
-```sass
-@import
-  "colors/light-typography",
-  "colors/dark-typography";
-```
-{: file='_sass/jekyll-theme-chirpy.scss'}
 
 ## Mathematics
 

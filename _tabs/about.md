@@ -171,7 +171,7 @@ CONTENTS
 
 ## 个人博客网站
 
-[.hxcmulmount.icu](http://.hxcmulmount.icu/) (请确认此链接是否有效，PPT中域名看起来不完整)
+
 
 ## THANKS
 

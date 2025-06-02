@@ -39,7 +39,9 @@ social:
     # 取消注释以添加更多社交链接
     # - https://www.facebook.com/username
     # - https://www.linkedin.com/in/username
-
+  type: wechat  # Or a custom type if Chirpy doesn't have native WeChat support
+  -icon: fab fa-weixin # Assuming Font Awesome 5 or 6 has a WeChat icon (fa-weixin)
+  -title: "WeChat"
 # 网站验证设置 (用于搜索引擎站长工具)
 webmaster_verifications:
   google: # 你的 Google 验证码

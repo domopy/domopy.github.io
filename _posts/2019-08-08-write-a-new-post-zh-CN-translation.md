@@ -1,0 +1,512 @@
+---
+title: Writing a New Post
+description: 原版教程中文翻译
+author: cotes
+date: 2019-08-08 14:10:00 +0800
+categories: [博客, 教程]
+tags: [教程]
+render_with_liquid: false
+---
+
+本教程将指导你如何在 *Chirpy* 模板中写一篇文章，即使你以前使用过 Jekyll，也值得一读，因为许多功能需要设置特定的变量。
+
+## 命名和路径
+
+创建名为 `YYYY-MM-DD-TITLE 的新文件。EXTENSION`{： .filepath} 并将其放在根目录的 `_posts`{： .filepath} 中。请注意，`EXTENSION`{： .filepath} 必须是 `md`{： .filepath} 和 `markdown`{： .filepath} 之一。如果您想节省创建文件的时间，请考虑使用插件 [`Jekyll-Compose`](https://github.com/jekyll/jekyll-compose) 来完成此作。
+
+## 前言
+
+基本上，您需要在帖子顶部填写如下 [Front Matter](https://jekyllrb.com/docs/front-matter/)：
+
+```yaml
+---
+title: TITLE
+date: YYYY-MM-DD HH:MM:SS +/-TTTT
+categories: [TOP_CATEGORY, SUB_CATEGORY]
+tags: [TAG]     # TAG names should always be lowercase
+---
+```
+
+> 默认情况下，帖子的*布局*已设置为 `post`，因此无需在 Front Matter 块中添加变量*布局* 。{： .prompt-tip }
+
+### Date 的时区
+
+为了准确记录文章的发布日期，您不仅应该设置 `_config.yml`{： .filepath} 的`时区` ，还应该在其 Front Matter 区块的可变`日期`中提供文章的时区。格式：+`/-TTTT，` 例如 `+0800`。
+
+### 类别和标签
+
+每个文章的`类别`设计为最多包含两个元素， `标签`中的元素数量可以是 0 到无穷大。例如：
+
+```yaml
+---
+categories: [Animal, Insect]
+tags: [bee]
+---
+```
+
+### 作者信息
+
+帖子的作者信息通常不需要在 *front matter* 中填写，默认会从变量 `social.name` 和 `social.links` 的第一个词条获取。但您也可以按如下方式覆盖它：
+
+在 `_data/authors.yml` 中添加作者信息（如果您的网站没有此文件，请随时创建一个）。
+
+```yaml
+<author_id>:
+  name: <full name>
+  twitter: <twitter_of_author>
+  url: <homepage_of_author>
+```
+
+{： file=“\_data/authors.yml” }
+
+然后使用 `author` 指定单个条目，或使用 `authors` 指定多个条目：
+
+```yaml
+---
+author: <author_id>                     # for single entry
+# or
+authors: [<author1_id>, <author2_id>]   # for multiple entries
+---
+```
+
+话虽如此，关键`作者`也可以识别多个条目。
+
+> 从文件 `_data/authors.yml`{： .filepath } 中读取作者信息的好处是，该页面将具有元标记 `twitter：creator`，这丰富了 [Twitter 卡片](https://developer.twitter.com/en/docs/twitter-for-websites/cards/guides/getting-started#card-and-content-attribution) ，对 SEO 有好处。{： .prompt-info }
+
+### 文章描述
+
+默认情况下，文章的第一个单词用于显示在文章列表的主页上、*“进一步阅读* ”部分以及 RSS 源的 XML 中。如果您不想显示文章自动生成的描述，可以使用 *Front Matter* 中的`描述`字段对其进行自定义，如下所示：
+
+```yaml
+---
+description: Short summary of the post.
+---
+```
+
+此外， `描述`文本也会显示在文章页面的文章标题下。
+
+## 目录
+
+默认情况下，**T**able **o**f **C** 内容 （TOC） 显示在帖子的右侧面板上。如果要全局关闭它，请转到 `_config.yml`{： .filepath} 并将变量 `toc` 的值设置为 `false`。如果要关闭特定文章的 TOC，请将以下内容添加到文章的 [Front Matter](https://jekyllrb.com/docs/front-matter/) 中：
+
+```yaml
+---
+toc: false
+---
+```
+
+## 评论
+
+注释的全局设置由 `_config.yml`{： .filepath} 文件中的 `comments.provider` 选项定义。为此变量选择评论系统后，将为所有帖子启用评论。
+
+如果要关闭特定文章的评论，请将以下内容添加到文章的 **Front Matter** 中：
+
+```yaml
+---
+comments: false
+---
+```
+
+## 媒体
+
+在 *Chirpy* 中，我们将图像、音频和视频称为媒体资源。
+
+### URL 前缀
+
+有时我们必须为文章中的多个资源定义重复的 URL 前缀，这是一项无聊的任务，您可以通过设置两个参数来避免。
+
+*   如果您使用 CDN 托管媒体文件，您可以在 `_config.yml`{： .filepath } 中指定 `cdn`。然后，站点头像和文章的媒体资源的 URL 以 CDN 域名为前缀。
+    
+    ```yaml
+    cdn: https://cdn.com
+    ```
+    
+    {： file='\_config.yml' .nolineno }
+    
+*   要指定当前 post/page 范围的资源路径前缀，请在 post 的 *front matter* 中设置 `media_subpath`：
+    
+    ```yaml
+    ---
+    media_subpath: /path/to/media/
+    ---
+    ```
+    
+    {： .nolineno }
+    
+
+选项 `site.cdn` 和 `page.media_subpath` 可以单独使用，也可以组合使用，以灵活地编写最终资源 URL： `[site.cdn/][page.media_subpath/]file.ext`
+
+### 图像
+
+#### 标题
+
+将斜体添加到图像的下一行，然后它将成为标题并显示在图像底部：
+
+```markdown
+![img-description](/path/to/image)
+_Image Caption_
+```
+
+{： .nolineno}
+
+#### 大小
+
+为了防止页面内容布局在加载图像时移动，我们应该为每个图像设置宽度和高度。
+
+```markdown
+![Desktop View](/assets/img/testimg.jpg){: width="700" height="400" }
+```
+
+{： .nolineno}
+
+> 对于 SVG，您至少必须指定其*宽度* ，否则它不会被渲染。{： .prompt-info }
+
+从 *Chirpy v5.0.0* 开始，`height` 和 `width` 支持缩写（`height` → `h，width` → `w`）。 以下示例与上述效果相同：
+
+```markdown
+![Desktop View](/assets/img/testimg.jpg){: w="700" h="400" }
+```
+
+{： .nolineno}
+
+#### 位置
+
+默认情况下，图像居中，但您可以使用 `normal`、`left` 和 `right` 类之一指定位置。
+
+> 指定位置后，不应添加图像标题。{： .prompt-warning }
+
+*   **正常位置**
+    
+    在下面的示例中，图像将左对齐：
+    
+    ```markdown
+    ![Desktop View](/assets/img/testimg.jpg){: .normal }
+    ```
+    
+    {： .nolineno}
+    
+*   **向左浮动**
+    
+    ```markdown
+    ![Desktop View](/assets/img/testimg.jpg){: .left }
+    ```
+    
+    {： .nolineno}
+    
+*   **向右浮动**
+    
+    ```markdown
+    ![Desktop View](/assets/img/testimg.jpg){: .right }
+    ```
+    
+    {： .nolineno}
+    
+
+#### 深色/浅色模式
+
+您可以使图像在深色/浅色模式下遵循主题首选项。这需要您准备两个图像，一个用于深色模式，一个用于浅色模式，然后为它们分配一个特定的类（ `深色`或`浅色` ）：
+
+```markdown
+![Light mode only](/path/to/light-mode.png){: .light }
+![Dark mode only](/path/to/dark-mode.png){: .dark }
+```
+
+#### 影子
+
+程序窗口的截图可以考虑展示阴影效果：
+
+```markdown
+![Desktop View](/assets/img/testimg.jpg){: .shadow }
+```
+
+{： .nolineno}
+
+#### 预览图像
+
+如果您想在文章顶部添加图片，请提供分辨率为 `1200 x 630` 的图片。请注意，如果图像纵横比未达到 `1.91 ： 1`，图像将被缩放和裁剪。
+
+了解这些先决条件后，您可以开始设置映像的属性：
+
+```yaml
+---
+image:
+  path: /path/to/image
+  alt: image alternative text
+---
+```
+
+注意，[`media_subpath`](#url-prefix) 也可以传递给预览图片，即设置完后，属性`路径`只需要图片文件名。
+
+为了简单使用，您也可以只使用 `image` 来定义路径。
+
+```yml
+---
+image: /path/to/image
+---
+```
+
+#### LQIP
+
+对于预览图像：
+
+```yaml
+---
+image:
+  lqip: /path/to/lqip-file # or base64 URI
+---
+```
+
+> 您可以在帖子 “[Text and Typography](../text-and-typography/)” 的预览图像中观察到 LQIP。
+
+对于普通图像：
+
+```markdown
+![Image description](/path/to/image){: lqip="/path/to/lqip-file" }
+```
+
+{： .nolineno }
+
+### 视频
+
+#### 社交媒体平台
+
+您可以使用以下语法嵌入来自社交媒体平台的视频：
+
+```liquid
+{% include embed/{Platform}.html id='{ID}' %}
+```
+
+其中 `Platform` 是平台名称的小写，`ID` 是视频 ID。
+
+下表展示了如何在给定的视频 URL 中获取我们需要的两个参数，您也可以了解当前支持的视频平台。
+
+| 视频 URL | 平台 | ID |
+| --- | --- | --- |
+| https://www。youtube.com/watch？v=H-B46URT4mg | youtube | H-B46URT4mg |
+| https://www。twitch.tv/视频/1634779211 | twitch | 1634779211 |
+| https://www。bilibilibili.com/视频/BV1Q44y1B7Wf | bilibili | BV1Q44y1B7Wf |
+
+#### 视频文件
+
+如果要直接嵌入视频文件，请使用以下语法：
+
+```liquid
+{% include embed/video.html src='{URL}' %}
+```
+
+其中 `URL` 是视频文件的 URL，例如 `/path/to/sample/video.mp4`。
+
+您还可以为嵌入的视频文件指定其他属性。以下是允许的属性的完整列表。
+
+*   `poster='/path/to/poster.png'` — 下载视频时显示的视频的海报图像
+*   `title='Text'` — 视频的标题，显示在视频下方，看起来与图像相同
+*   `autoplay=true` — 视频会尽快自动开始播放
+*   `loop=true` — 到达视频结尾时自动返回起点
+*   `muted=true` — 音频最初将被静音
+*   `类型` — 指定其他视频格式的扩展名，以 `|`.确保这些文件与主视频文件位于同一目录中。
+
+考虑使用上述所有内容的示例：
+
+```liquid
+{%
+  include embed/video.html
+  src='/path/to/video.mp4'
+  types='ogg|mov'
+  poster='poster.png'
+  title='Demo video'
+  autoplay=true
+  loop=true
+  muted=true
+%}
+```
+
+### 音频
+
+如果要直接嵌入音频文件，请使用以下语法：
+
+```liquid
+{% include embed/audio.html src='{URL}' %}
+```
+
+其中 `URL` 是音频文件的 URL，例如 `/path/to/audio.mp3`。
+
+您还可以为嵌入的音频文件指定其他属性。以下是允许的属性的完整列表。
+
+*   `title='Text'` — 音频的标题，显示在音频下方，看起来与图像相同
+*   `types` — 指定其他音频格式的扩展名，以 `|` 分隔。确保这些文件与主音频文件位于同一目录中。
+
+考虑使用上述所有内容的示例：
+
+```liquid
+{%
+  include embed/audio.html
+  src='/path/to/audio.mp3'
+  types='ogg|wav|aac'
+  title='Demo audio'
+%}
+```
+
+## 固定帖子
+
+您可以将一个或多个帖子固定到主页顶部，固定帖子将根据其发布日期按相反顺序排序。启用方式：
+
+```yaml
+---
+pin: true
+---
+```
+
+## 提示
+
+有几种类型的提示： `提示` 、 `信息` 、 `警告`和`危险` 。它们可以通过将类 `prompt-{type}` 添加到 blockquote 来生成。例如，定义 `info` 类型的提示，如下所示：
+
+```md
+> Example line for prompt.
+{: .prompt-info }
+```
+
+{： .nolineno }
+
+## 语法
+
+### 内联代码
+
+```md
+`inline code part`
+```
+
+{： .nolineno }
+
+### 文件路径高亮显示
+
+```md
+`/path/to/a/file.extend`{: .filepath}
+```
+
+{： .nolineno }
+
+### 代码块
+
+Markdown 符号 `'''` 可以轻松创建代码块，如下所示：
+
+````md
+```
+This is a plaintext code snippet.
+```
+````
+
+#### 指定语言
+
+使用 `'''{language}` 你会得到一个语法高亮的代码块：
+
+````markdown
+```yaml
+key: value
+```
+````
+
+> Jekyll 标签 `{% highlight %}` 与此主题不兼容。{： .prompt-danger }
+
+#### 行号
+
+默认情况下，除 `plaintext`、`console` 和 `terminal` 之外的所有语言都将显示行号。当你想隐藏代码块的行号时，向它添加类 `nolineno`：
+
+````markdown
+```shell
+echo 'No more line numbers!'
+```
+{: .nolineno }
+````
+
+#### 指定文件名
+
+您可能已经注意到，代码语言将显示在代码块的顶部。如果要用文件名替换它，可以添加属性`文件`来实现这一点：
+
+````markdown
+```shell
+# content
+```
+{: file="path/to/file" }
+````
+
+#### Liquid 代码
+
+如果要显示 **Liquid** 代码段，请用 `{% raw %}` 和 `{% endraw %}` 将 Liquid 代码括起来：
+
+````markdown
+{% raw %}
+```liquid
+{% if product.title contains 'Pack' %}
+  This product's title contains the word Pack.
+{% endif %}
+```
+{% endraw %}
+````
+
+或者将 `render_with_liquid： false`（需要 Jekyll 4.0 或更高版本）添加到帖子的 YAML 块中。
+
+## 数学
+
+我们使用 [**MathJax**](https://www.mathjax.org/) 来生成数学。出于网站性能原因，默认情况下不会加载数学功能。但可以通过以下方式启用它：
+
+```yaml
+---
+math: true
+---
+```
+
+启用数学功能后，您可以使用以下语法添加数学方程式：
+
+*   **块数学**应添加 `$$ 数学 $$`，在 `$$` **前后必须添加**空行
+    *   **插入方程式编号**时，应添加 `$$\begin{equation} math \end{equation}$$`
+    *   **引用方程式编号**应在方程块中使用 `\label{eq：label_name}` 并在文本中内联 `\eqref{eq：label_name}` 完成（见下面的示例）
+*   **内联数学** （以行为单位）应添加 `$$ 数学 $$` 在 `$$` 之前或之后没有任何空行
+*   **内联数学** （在列表中）应添加 `\$$ 数学 $$`
+
+```markdown
+<!-- Block math, keep all blank lines -->
+
+$$
+LaTeX_math_expression
+$$
+
+<!-- Equation numbering, keep all blank lines  -->
+
+$$
+\begin{equation}
+  LaTeX_math_expression
+  \label{eq:label_name}
+\end{equation}
+$$
+
+Can be referenced as \eqref{eq:label_name}.
+
+<!-- Inline math in lines, NO blank lines -->
+
+"Lorem ipsum dolor sit amet, $$ LaTeX_math_expression $$ consectetur adipiscing elit."
+
+<!-- Inline math in lists, escape the first `$` -->
+
+1. \$$ LaTeX_math_expression $$
+2. \$$ LaTeX_math_expression $$
+3. \$$ LaTeX_math_expression $$
+```
+
+> 从 `v7.0.0` 开始，**MathJax** 的配置选项已移至文件 `assets/js/data/mathjax.js`{： .filepath }，您可以根据需要更改选项，例如添加[扩展](https://docs.mathjax.org/en/latest/input/tex/extensions/index.html)名。
+> 如果您通过 `chirpy-starter` 构建站点，请将该文件从 gem 安装目录（使用 command `bundle info --path jekyll-theme-chirpy` 检查）复制到存储库中的同一目录。{： .prompt-tip }
+
+## 美人鱼
+
+[**Mermaid**](https://github.com/mermaid-js/mermaid) 是一个很棒的图表生成工具。要在您的帖子中启用它，请将以下内容添加到 YAML 块中：
+
+```yaml
+---
+mermaid: true
+---
+```
+
+然后你可以像其他 markdown 语言一样使用它：用 `'''mermaid` 和 `'''` 将图形代码括起来。
+
+## 了解更多信息
+
+有关 Jekyll 帖子的更多知识，请访问 [Jekyll 文档：帖子](https://jekyllrb.com/docs/posts/) 。

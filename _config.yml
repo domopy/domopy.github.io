@@ -26,8 +26,6 @@ url: "https://domopy.github.io" # 网站的完整 URL，非常重要，用于生
 
 github:
   username: domopy # 你的 GitHub 用户名
-twitter:
-  username: twitter_username # 你的 Twitter 用户名 (如果使用)
 
 social:
   # 更改为你的全名。
